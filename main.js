@@ -21,8 +21,13 @@ function onSubmit(e) {
     // Remove error after 3 seconds
     setTimeout(() => msg.remove(), 3000);
   } else {
+    //LocalStorage
+
+    let myObj_serialized = JSON.stringify({name:nameInput.value,email:emailInput.value})
+    localStorage.setItem("userDetails", myObj_serialized)
+    let myObj = JSON.parse(localStorage.getItem("userDetails"))
+    console.log(myObj)
     // Create new list item with user
-    localStorage.setItem("userDetails", [nameInput.value,emailInput.value])
     const li = document.createElement('li');
 
     // Add text node with input values
