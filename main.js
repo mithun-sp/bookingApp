@@ -1,37 +1,48 @@
 // USER FORM SCRIPT
 
 // Put DOM elements into variables
-const myForm = document.querySelector('#my-form');
-const nameInput = document.querySelector('#name');
-const emailInput = document.querySelector('#email');
-const msg = document.querySelector('.msg');
-const userList = document.querySelector('#users');
+const myForm = document.querySelector("#my-form");
+const nameInput = document.querySelector("#name");
+const emailInput = document.querySelector("#email");
+const msg = document.querySelector(".msg");
+const userList = document.querySelector("#users");
 
 // Listen for form submit
-myForm.addEventListener('submit', onSubmit);
+myForm.addEventListener("submit", onSubmit);
 
 function onSubmit(e) {
   e.preventDefault();
-  
-  if(nameInput.value === '' || emailInput.value === '') {
+
+  if (nameInput.value === "" || emailInput.value === "") {
     // alert('Please enter all fields');
-    msg.classList.add('error');
-    msg.innerHTML = 'Please enter all fields';
+    msg.classList.add("error");
+    msg.innerHTML = "Please enter all fields";
 
     // Remove error after 3 seconds
     setTimeout(() => msg.remove(), 3000);
   } else {
     //LocalStorage
 
-    let myObj_serialized = JSON.stringify({name:nameInput.value,email:emailInput.value})
-    localStorage.setItem("userDetails", myObj_serialized)
-    let myObj = JSON.parse(localStorage.getItem("userDetails"))
-    console.log(myObj)
+    let existingUserData = JSON.parse(localStorage.getItem("userData")) || [];
+
+    let newData = {
+      name: nameInput.value,
+      email: emailInput.value,
+    };
+
+    existingUserData.push(newData)
+
+    let myObj_serialized = JSON.stringify(existingUserData);
+    localStorage.setItem("userData", myObj_serialized);
+    let myObj = JSON.parse(localStorage.getItem("userData"));
+    console.log(myObj);
     // Create new list item with user
-    const li = document.createElement('li');
+    const li = document.createElement("li");
 
     // Add text node with input values
-    li.appendChild(document.createTextNode(`${nameInput.value}: ${emailInput.value}`));
+    li.appendChild(
+      document.createTextNode(`${nameInput.value}: ${emailInput.value}`)
+    );
 
     // Add HTML
     // li.innerHTML = `<strong>${nameInput.value}</strong>e: ${emailInput.value}`;
@@ -40,7 +51,7 @@ function onSubmit(e) {
     userList.appendChild(li);
 
     // Clear fields
-    nameInput.value = '';
-    emailInput.value = '';
+    nameInput.value = "";
+    emailInput.value = "";
   }
 }
