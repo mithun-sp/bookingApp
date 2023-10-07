@@ -21,8 +21,8 @@ function onSubmit(e) {
     // Remove error after 3 seconds
     setTimeout(() => msg.remove(), 3000);
   } else {
-    //LocalStorage
 
+    //LocalStorage
     let existingUserData = JSON.parse(localStorage.getItem("userData")) || [];
 
     let newData = {
@@ -40,9 +40,10 @@ function onSubmit(e) {
     // Create new list item with user
     const li = document.createElement("li");
 
+    // Create new delete button
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete";
-    deleteBtn.textContent = "Delete";
+    deleteBtn.textContent = ":Delete";
     deleteBtn.style.marginLeft = "10px";
 
     // Add an onClick event to the delete button
@@ -64,12 +65,38 @@ function onSubmit(e) {
       }
     });
 
+    //Create new edit button
+    let editBtn = document.createElement("button")
+    editBtn.textContent = "Edit"
+    editBtn.style.marginLeft = "10px"
+
+    //Add an onCLick event to edit button
+    editBtn.addEventListener("click", function () {
+      const item = this.parentElement
+      let text = item.innerText
+      let textArray = text.split(":")
+      nameInput.value = textArray[0]
+      emailInput.value = textArray[1]
+
+      if (item) {
+        // Remove the item from the DOM
+        item.remove();
+
+        let myObj = JSON.parse(localStorage.getItem("userData"));
+        let newObj = myObj.filter((data) => {
+          return data.name !== textArray[0] && data.email !== textArray[1];
+        });
+        localStorage.setItem("userData", JSON.stringify(newObj));
+      }
+    })
+
     // Add text node with input values
     li.appendChild(
       document.createTextNode(`${nameInput.value}: ${emailInput.value}`)
     );
 
     li.appendChild(deleteBtn);
+    li.appendChild(editBtn)
 
     // Add HTML
     // li.innerHTML = `<strong>${nameInput.value}</strong>e: ${emailInput.value}`;
