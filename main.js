@@ -30,19 +30,46 @@ function onSubmit(e) {
       email: emailInput.value,
     };
 
-    existingUserData.push(newData)
+    existingUserData.push(newData);
 
     let myObj_serialized = JSON.stringify(existingUserData);
     localStorage.setItem("userData", myObj_serialized);
     let myObj = JSON.parse(localStorage.getItem("userData"));
     console.log(myObj);
+
     // Create new list item with user
     const li = document.createElement("li");
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete";
+    deleteBtn.textContent = "Delete";
+    deleteBtn.style.marginLeft = "10px";
+
+    // Add an onClick event to the delete button
+    deleteBtn.addEventListener("click", function () {
+      // Access the parent element (e.g., the <div class="item">)
+      const item = this.parentElement;
+      let text = item.innerText
+      let textArray = text.split(":")
+
+      if (item) {
+        // Remove the item from the DOM
+        item.remove();
+
+        let myObj = JSON.parse(localStorage.getItem("userData"));
+        let newObj = myObj.filter((data) => {
+          return data.name !== textArray[0] && data.email !== textArray[1];
+        });
+        localStorage.setItem("userData", JSON.stringify(newObj));
+      }
+    });
 
     // Add text node with input values
     li.appendChild(
       document.createTextNode(`${nameInput.value}: ${emailInput.value}`)
     );
+
+    li.appendChild(deleteBtn);
 
     // Add HTML
     // li.innerHTML = `<strong>${nameInput.value}</strong>e: ${emailInput.value}`;
