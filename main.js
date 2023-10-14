@@ -116,3 +116,12 @@ function onSubmit(e) {
     emailInput.value = "";
   }
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  axios
+    .get(
+      "https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData"
+    )
+    .then((res) => console.log(res.data))
+    .catch((err) => console.log(err));
+});
