@@ -21,21 +21,28 @@ function onSubmit(e) {
     // Remove error after 3 seconds
     setTimeout(() => msg.remove(), 3000);
   } else {
-
     //LocalStorage
-    let existingUserData = JSON.parse(localStorage.getItem("userData")) || [];
+    // let existingUserData = JSON.parse(localStorage.getItem("userData")) || [];
 
     let newData = {
       name: nameInput.value,
       email: emailInput.value,
     };
 
-    existingUserData.push(newData);
+    axios
+      .post(
+        "https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData",
+        newData
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
 
-    let myObj_serialized = JSON.stringify(existingUserData);
-    localStorage.setItem("userData", myObj_serialized);
-    let myObj = JSON.parse(localStorage.getItem("userData"));
-    console.log(myObj);
+    // existingUserData.push(newData);
+
+    // let myObj_serialized = JSON.stringify(existingUserData);
+    // localStorage.setItem("userData", myObj_serialized);
+    // let myObj = JSON.parse(localStorage.getItem("userData"));
+    // console.log(myObj);
 
     // Create new list item with user
     const li = document.createElement("li");
@@ -50,8 +57,8 @@ function onSubmit(e) {
     deleteBtn.addEventListener("click", function () {
       // Access the parent element (e.g., the <div class="item">)
       const item = this.parentElement;
-      let text = item.innerText
-      let textArray = text.split(":")
+      let text = item.innerText;
+      let textArray = text.split(":");
 
       if (item) {
         // Remove the item from the DOM
@@ -66,17 +73,17 @@ function onSubmit(e) {
     });
 
     //Create new edit button
-    let editBtn = document.createElement("button")
-    editBtn.textContent = "Edit"
-    editBtn.style.marginLeft = "10px"
+    let editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.style.marginLeft = "10px";
 
     //Add an onCLick event to edit button
     editBtn.addEventListener("click", function () {
-      const item = this.parentElement
-      let text = item.innerText
-      let textArray = text.split(":")
-      nameInput.value = textArray[0]
-      emailInput.value = textArray[1]
+      const item = this.parentElement;
+      let text = item.innerText;
+      let textArray = text.split(":");
+      nameInput.value = textArray[0];
+      emailInput.value = textArray[1];
 
       if (item) {
         // Remove the item from the DOM
@@ -88,7 +95,7 @@ function onSubmit(e) {
         });
         localStorage.setItem("userData", JSON.stringify(newObj));
       }
-    })
+    });
 
     // Add text node with input values
     li.appendChild(
@@ -96,7 +103,7 @@ function onSubmit(e) {
     );
 
     li.appendChild(deleteBtn);
-    li.appendChild(editBtn)
+    li.appendChild(editBtn);
 
     // Add HTML
     // li.innerHTML = `<strong>${nameInput.value}</strong>e: ${emailInput.value}`;
