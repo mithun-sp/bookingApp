@@ -1,5 +1,3 @@
-// USER FORM SCRIPT
-
 // Put DOM elements into variables
 const myForm = document.querySelector("#my-form");
 const nameInput = document.querySelector("#name");
@@ -21,9 +19,6 @@ function onSubmit(e) {
     // Remove error after 3 seconds
     setTimeout(() => msg.remove(), 3000);
   } else {
-    //LocalStorage
-    // let existingUserData = JSON.parse(localStorage.getItem("userData")) || [];
-
     let newData = {
       name: nameInput.value,
       email: emailInput.value,
@@ -34,82 +29,11 @@ function onSubmit(e) {
         "https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData",
         newData
       )
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-
-    // existingUserData.push(newData);
-
-    // let myObj_serialized = JSON.stringify(existingUserData);
-    // localStorage.setItem("userData", myObj_serialized);
-    // let myObj = JSON.parse(localStorage.getItem("userData"));
-    // console.log(myObj);
-
-    // Create new list item with user
-    const li = document.createElement("li");
-
-    // Create new delete button
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete";
-    deleteBtn.textContent = ":Delete";
-    deleteBtn.style.marginLeft = "10px";
-
-    // Add an onClick event to the delete button
-    deleteBtn.addEventListener("click", function () {
-      // Access the parent element (e.g., the <div class="item">)
-      const item = this.parentElement;
-      let text = item.innerText;
-      let textArray = text.split(":");
-
-      if (item) {
-        // Remove the item from the DOM
-        item.remove();
-
-        let myObj = JSON.parse(localStorage.getItem("userData"));
-        let newObj = myObj.filter((data) => {
-          return data.name !== textArray[0] && data.email !== textArray[1];
-        });
-        localStorage.setItem("userData", JSON.stringify(newObj));
-      }
-    });
-
-    //Create new edit button
-    let editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.style.marginLeft = "10px";
-
-    //Add an onCLick event to edit button
-    editBtn.addEventListener("click", function () {
-      const item = this.parentElement;
-      let text = item.innerText;
-      let textArray = text.split(":");
-      nameInput.value = textArray[0];
-      emailInput.value = textArray[1];
-
-      if (item) {
-        // Remove the item from the DOM
-        item.remove();
-
-        let myObj = JSON.parse(localStorage.getItem("userData"));
-        let newObj = myObj.filter((data) => {
-          return data.name !== textArray[0] && data.email !== textArray[1];
-        });
-        localStorage.setItem("userData", JSON.stringify(newObj));
-      }
-    });
-
-    // Add text node with input values
-    li.appendChild(
-      document.createTextNode(`${nameInput.value}: ${emailInput.value}`)
-    );
-
-    li.appendChild(deleteBtn);
-    li.appendChild(editBtn);
-
-    // Add HTML
-    // li.innerHTML = `<strong>${nameInput.value}</strong>e: ${emailInput.value}`;
-
-    // Append to ul
-    userList.appendChild(li);
+      .then((res) => {
+        console.log(res)
+        location.reload()      
+      })
+      .catch((err) => console.log(err));    
 
     // Clear fields
     nameInput.value = "";
@@ -122,6 +46,57 @@ window.addEventListener("DOMContentLoaded", () => {
     .get(
       "https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData"
     )
-    .then((res) => console.log(res.data))
+    .then((res) => {
+      console.log(res.data);
+      for (let i = 0; i < res.data.length; i++) {
+        showNewUser(res.data[i]);
+      }
+    })
     .catch((err) => console.log(err));
 });
+
+const onDelete = (data) => {
+  axios
+    .delete(
+      `https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData/${data._id}`
+    )
+    .then((res) => {
+      console.log(res);
+      // After the request is complete, refresh the page
+      location.reload();
+    })
+    .catch((err) => console.log(err));
+};
+
+function showNewUser(data) {
+  const name = data.name;
+  const email = data.email;
+
+  const li = document.createElement("li");
+  li.innerHTML = `<strong>${name}</strong>: ${email}`;
+
+  // Delete Button
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.style.marginLeft = "10px";
+
+  deleteBtn.addEventListener("click", () => {
+    onDelete(data);
+  });
+
+  // Edit Button
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.style.marginLeft = "10px";
+
+  editBtn.addEventListener("click", () => {
+    onEdit(data);
+  });
+
+  const span = document.createElement("span");
+  span.appendChild(deleteBtn);
+  span.appendChild(editBtn);
+  li.appendChild(span);
+
+  userList.appendChild(li);
+}
