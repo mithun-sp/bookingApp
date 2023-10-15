@@ -2,6 +2,7 @@
 const myForm = document.querySelector("#my-form");
 const nameInput = document.querySelector("#name");
 const emailInput = document.querySelector("#email");
+const phoneInput = document.querySelector("#phone");
 const msg = document.querySelector(".msg");
 const userList = document.querySelector("#users");
 
@@ -11,7 +12,11 @@ myForm.addEventListener("submit", onSubmit);
 function onSubmit(e) {
   e.preventDefault();
 
-  if (nameInput.value === "" || emailInput.value === "") {
+  if (
+    nameInput.value === "" ||
+    emailInput.value === "" ||
+    phoneInput.value === ""
+  ) {
     // alert('Please enter all fields');
     msg.classList.add("error");
     msg.innerHTML = "Please enter all fields";
@@ -22,6 +27,7 @@ function onSubmit(e) {
     let newData = {
       name: nameInput.value,
       email: emailInput.value,
+      phone: phoneInput.value,
     };
 
     axios
@@ -30,22 +36,23 @@ function onSubmit(e) {
         newData
       )
       .then((res) => {
-        console.log(res)
-        location.reload()      
+        console.log(res);
+        location.reload();
       })
-      .catch((err) => console.log(err));    
+      .catch((err) => console.log(err));
 
     // Clear fields
     nameInput.value = "";
     emailInput.value = "";
+    phoneInput.value = "";
   }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   axios
-    .get(
-      "https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData"
-    )
+    .get
+    // "https://crudcrud.com/api/af0e1034eb3749008ac735712eeb2ffc/appointmentData"
+    ()
     .then((res) => {
       console.log(res.data);
       for (let i = 0; i < res.data.length; i++) {
@@ -68,12 +75,22 @@ const onDelete = (data) => {
     .catch((err) => console.log(err));
 };
 
+const onEdit = (data) => {
+
+  nameInput.value = data.name
+  emailInput.value = data.email
+  phoneInput.value = data.phone
+
+  onDelete(data)
+};
+
 function showNewUser(data) {
   const name = data.name;
   const email = data.email;
+  const phone = data.phone;
 
   const li = document.createElement("li");
-  li.innerHTML = `<strong>${name}</strong>: ${email}`;
+  li.innerHTML = `<strong>${name}</strong>: ${email} -- ${phone}`;
 
   // Delete Button
   const deleteBtn = document.createElement("button");
